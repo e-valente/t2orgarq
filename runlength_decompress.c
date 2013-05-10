@@ -1,7 +1,7 @@
 /*
- * runlength.c
+ * runlength_decompress.c
  *
- *  Created on: May 8, 2013
+ *  Created on: May 9, 2013
  *      Author: emanuel
  */
 
@@ -9,9 +9,9 @@
 #include <stdio.h>
 #include <string.h>
 
-#include "runlength.h"
+#include "runlength_decompress.h"
 
-void runlength_compress(char *filename_in)
+void runlength_decompress(char *filename_in)
 {
 	int i, j;
 	char ch;
@@ -22,6 +22,9 @@ void runlength_compress(char *filename_in)
 
 
 	fp_in = fopen(filename_in, "r");
+
+	printf("nome do arquivo: %s\n", filename_in);
+	exit(1);
 
 
 	if(!fp_in){
@@ -106,58 +109,3 @@ void runlength_compress(char *filename_in)
 
 }
 
-void runlength_row_process(int **img_matrix, int row, int cols)
-{
-	int i, count;
-
-	//imprime
-	for(i = 0; i < cols -1; i++)
-	{
-		count = 1;
-		if(img_matrix[row][i] == img_matrix[row][i+1]) {
-			while(img_matrix[row][i] == img_matrix[row][i+1] && cols > i +1)
-			{
-				count++;
-				i++;
-			}
-
-			if(count > 3)runlength_flush(img_matrix, row, i, count);
-
-			if(count == 3) {
-				i -= 2;
-				runlength_flush(img_matrix, row, i, 3);
-			}
-			if(count == 2) {
-				i -= 1;
-				runlength_flush(img_matrix, row, i, 2);
-			}
-
-
-		} else{
-			runlength_flush(img_matrix, row, i, count);
-
-		}
-
-		//printf("linha atual é : %d elem: %d\n", row+1, img_matrix[row][i]);
-	}
-
-
-
-}
-
-
-void runlength_flush(int **img_matrix, int row, int i, int count)
-{
-	//printf("linha: %d elemento repetido %d numero de repeticoes: %d\n",
-	//	row+1, img_matrix[row][i], count );
-	if(count > 3){
-		printf("ff %d %d ",img_matrix[row][i], count);
-		fprintf(fp_out, "ff %d %d ",img_matrix[row][i], count);
-
-	}
-	else {
-		printf("%d ",img_matrix[row][i]);
-		fprintf(fp_out, "%d ",img_matrix[row][i]);
-	}
-
-}

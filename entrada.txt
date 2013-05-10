@@ -1,0 +1,4 @@
+compactar run-length teste.pbm
+descompactar run-length teste.rl
+sair
+

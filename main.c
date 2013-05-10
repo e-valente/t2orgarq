@@ -8,15 +8,16 @@
 #include <stdio.h>
 #include <string.h>
 
-#include "runlength.h"
+#include "runlength_compress.h"
+#include "runlength_decompress.h"
 
 
 char* readLine(FILE*);
 
 int main(int argc, char * argv[])
 {
-	FILE *fp;
 	char *option, *token;
+	int ret;
 
 	//fp = fopen(argv[1], "r");
 
@@ -26,7 +27,7 @@ int main(int argc, char * argv[])
 
 	while(strcmp(option, "sair") != 0)
 	{
-		if(strcmp(option, "compactar run-length") > 0)
+		if(strncmp(option, "compactar run-length", 20) == 0)
 		{
 			token = strtok(option, " ");
 			token = strtok(NULL, " ");
@@ -37,16 +38,14 @@ int main(int argc, char * argv[])
 
 		}
 
-		if(strcmp(option, "descompactar run-length") > 0)
+		if(strncmp(option, "descompactar run-length", 23) == 0)
 		{
 			token = strtok(option, " ");
 			token = strtok(NULL, " ");
 			token = strtok(NULL, " ");
 			//token = file.pbm
-			//fp = fopen(token, "r");
 
-			//if(fp != NULL) runlength_init(fp);
-			//else printf("Falha ao abrir arquivo %s\n ", token);
+			runlength_decompress(token);
 
 		}
 
