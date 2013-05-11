@@ -17,7 +17,6 @@ char* readLine(FILE*);
 int main(int argc, char * argv[])
 {
 	char *option, *token;
-	int ret;
 
 	//fp = fopen(argv[1], "r");
 
@@ -43,7 +42,7 @@ int main(int argc, char * argv[])
 			token = strtok(option, " ");
 			token = strtok(NULL, " ");
 			token = strtok(NULL, " ");
-			//token = file.pbm
+			//token = file.rl
 
 			runlength_decompress(token);
 

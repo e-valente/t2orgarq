@@ -14,11 +14,11 @@
 void runlength_compress(char *filename_in)
 {
 	int i, j;
-	char ch;
-	int rows, cols;
+	int rows, cols, range;
 	char img_magic_number[2];
-	char *token, *filename_out;
+	char *filename_out;
 	int **img_matrix;
+	char *rlformat = ".rl";
 
 
 	fp_in = fopen(filename_in, "r");
@@ -30,10 +30,10 @@ void runlength_compress(char *filename_in)
 	}
 
 	//handling file out (compressed)
-	token = strtok(filename_in, "pbm");
-	filename_out = (char*)malloc(sizeof(char) * (strlen(token) + 3));
-	strcat(filename_out, token);
-	strcat(filename_out, "rl");
+	filename_out = (char*)malloc(sizeof(char) * strlen(filename_in));
+	strcpy(filename_out, "\0");
+	strncat(filename_out, filename_in, strlen(filename_in) -4);
+	strcat(filename_out, rlformat);
 
 	//printf("arquivo de saida: %s\n", filename_out);
 
@@ -45,10 +45,12 @@ void runlength_compress(char *filename_in)
 	//get the magic number, cols, and rows
 	fscanf(fp_in, "%s", img_magic_number);
 	fscanf(fp_in, "%d %d", &cols, &rows);
+	fscanf(fp_in, "%d", &range);
 
 	//write magic number cols and rows
 	fprintf(fp_out,"%s\n", "P8");
 	fprintf(fp_out,"%d %d\n", cols, rows);
+	fprintf(fp_out, "%d\n", range);
 
 
 	//alloc img matrix
@@ -64,23 +66,8 @@ void runlength_compress(char *filename_in)
 	for(i = 0; i < rows; i++)
 	{
 		for(j = 0; j < cols; j++)
-		{
 
-
-			ch = fgetc(fp_in);
-
-			//qdo o primeiro caracter for espaco
-			if(i == 0 && j == 0 && ch == '\n')
-				ch = fgetc(fp_in);
-
-			if(ch == ' ' || ch == '\n')
-				j--;
-
-
-			if(ch != ' ' && ch != '\n')
-				img_matrix[i][j] = atoi(&ch);
-		}
-
+			fscanf(fp_in, "%d",&img_matrix[i][j]);
 	}
 
 
@@ -114,6 +101,7 @@ void runlength_row_process(int **img_matrix, int row, int cols)
 	for(i = 0; i < cols -1; i++)
 	{
 		count = 1;
+		//printf("linha %d colina %d comparando %d com %d\n", row, i, img_matrix[row][i],img_matrix[row][i+1] );
 		if(img_matrix[row][i] == img_matrix[row][i+1]) {
 			while(img_matrix[row][i] == img_matrix[row][i+1] && cols > i +1)
 			{
@@ -133,14 +121,15 @@ void runlength_row_process(int **img_matrix, int row, int cols)
 			}
 
 
-		} else{
-			runlength_flush(img_matrix, row, i, count);
+		} else runlength_flush(img_matrix, row, i, count);
 
-		}
 
-		//printf("linha atual é : %d elem: %d\n", row+1, img_matrix[row][i]);
 	}
 
+	//se o ultimo caracter for diferente do penultimo
+	count = 1;
+	if(img_matrix[row][cols-2] != img_matrix[row][cols-1])
+		runlength_flush(img_matrix, row, cols -1, count);
 
 
 }
