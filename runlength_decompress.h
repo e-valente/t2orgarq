@@ -10,8 +10,10 @@
 
 FILE *fp_in, *fp_out;
 void runlength_decompress(char*);
-void runlength_decompress_process_row(FILE *fp_in, FILE *fp_out, int i);
-void runlength_decompress_flush_repeated(FILE *fp_in, FILE *fp_out);
+void runlength_decompress_process_row(FILE *fp_in, int i);
+void runlength_decompress_flush_repeated(FILE *fp_in);
+void runlength_decompress_process_row_with_fileout(FILE *fp_in, FILE *fp_out, int i);
+void runlength_decompress_flush_repeated_with_fileout(FILE *fp_in, FILE *fp_out);
 
 
 #endif /* RUNLENGTH_DECOMPRESS_H_ */

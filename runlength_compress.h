@@ -11,7 +11,7 @@
 FILE *fp_in, *fp_out;
 void runlength_compress(char*);
 void runlength_row_process(int **, int row, int cols);
-void runlength_flush(int **img_matrix, int row, int i, int count);
+void runlength_flush(int **img_matrix, int row, int total_cols, int i, int count);
 
 
 #endif /* RUNLENGTH_COMPRESS_H_ */

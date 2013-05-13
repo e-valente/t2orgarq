@@ -12,15 +12,12 @@
 #include "runlength_decompress.h"
 
 
+
 char* readLine(FILE*);
 
 int main(int argc, char * argv[])
 {
 	char *option, *token;
-
-	//fp = fopen(argv[1], "r");
-
-	//runlength_init(fp);
 
 	option = readLine(stdin);
 
@@ -48,25 +45,21 @@ int main(int argc, char * argv[])
 
 		}
 
-
-
 		if(option != NULL) free(option);
 
 		option = readLine(stdin);
 	}
 
-
-
-
-
 	free(option);
-
-	//myprint();
 
 	return 0;
 }
 
 
+/*
+ * retorna um ponteiro (já alocado) de uma string
+ * lida através de um ponteiro FILE* (ex: stdin)
+ */
 char* readLine(FILE* fd)
 {
 	char *str = NULL;
@@ -77,13 +70,13 @@ char* readLine(FILE* fd)
 		c = getc(fd);
 		str = (char*)realloc(str, sizeof(char) * (count +1));
 		if(c != '\n')str[count++] = c;
-		//evita guardar enter (como primeiro caracter)
-		//do buffer
+		//evita guardar enter
+		//(como primeiro caracter) do buffer
 		if(c == '\n' && count == 0)c = 'a';
 
 	}while(c != '\n');
 
-	//here, str[count-1] = '\n'
+	//str[count-1] = '\n'
 	str[count ] = '\0';
 
 	return str;
