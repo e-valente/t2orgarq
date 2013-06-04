@@ -11,14 +11,17 @@
 
 #include "runlength_compress.h"
 
+/*
+ * Processa o arquivo a ser comprimido
+ * Parâmetros:
+ *  *fp_in: ponteiro para o arquvo de entrada
+ */
 void runlength_compress(char *filename_in)
 {
 	int i, j;
 	int rows, cols, range;
 	char img_magic_number[2];
-	char *filename_out;
 	int **img_matrix;
-	char *rlformat = ".rl";
 
 
 	fp_in = fopen(filename_in, "r");
@@ -41,24 +44,6 @@ void runlength_compress(char *filename_in)
 	printf("%d %d\n", cols, rows);
 	printf("%d\n", range);
 
-
-
-	/*/*caso queira que grave em arquivo externo
-	 * descomente essas linhas
-	/*
-	filename_out = (char*)malloc(sizeof(char) * strlen(filename_in));
-	strcpy(filename_out, "\0");
-	strncat(filename_out, filename_in, strlen(filename_in) -4);
-	strcat(filename_out, rlformat);
-
-	fp_out = fopen(filename_out, "w");
-	fprintf(fp_out,"%s\n", "P8");
-	fprintf(fp_out,"%d %d\n", cols, rows);
-	fprintf(fp_out, "%d\n", range);
-	 */
-
-
-
 	//alloc img matrix
 	img_matrix = (int**) malloc(sizeof(int*) * rows);
 
@@ -69,11 +54,14 @@ void runlength_compress(char *filename_in)
 
 
 
+	//arquivo -> ram
 	for(i = 0; i < rows; i++)
 	{
 		for(j = 0; j < cols; j++)
+		{
 
 			fscanf(fp_in, "%d",&img_matrix[i][j]);
+		}
 	}
 
 
@@ -83,10 +71,6 @@ void runlength_compress(char *filename_in)
 		runlength_row_process(img_matrix, i, cols);
 		printf("\n");
 
-		/*caso queira que grave em arquivo externo
-		 * descomente a linha abaixo
-		 */
-		//fprintf(fp_out, "\n");
 	}
 
 
@@ -99,12 +83,6 @@ void runlength_compress(char *filename_in)
 
 	fclose(fp_in);
 	free(img_matrix);
-
-	/*caso queira que grave em arquivo externo
-	 * descomente essas linhas
-	 */
-	//free(filename_out);
-	//fclose(fp_out);
 
 }
 
@@ -136,10 +114,12 @@ void runlength_row_process(int **img_matrix, int row, int cols)
 			if(count == 3) {
 				i -= 2;
 				runlength_flush(img_matrix, row, cols, i, 3);
+				i+=2;
 			}
 			if(count == 2) {
 				i -= 1;
 				runlength_flush(img_matrix, row, cols, i, 2);
+				i += 1;
 			}
 
 
@@ -168,6 +148,7 @@ void runlength_row_process(int **img_matrix, int row, int cols)
  */
 void runlength_flush(int **img_matrix, int row, int total_cols,  int i, int count)
 {
+	//repete
 	if(count > 3){
 		//se nao for o ultimo caracter da linha colocamos
 		//um espaco depois
@@ -188,25 +169,38 @@ void runlength_flush(int **img_matrix, int row, int total_cols,  int i, int coun
 
 		}
 
-	}
-	else {
-		//se nao for o ultimo caracter da linha colocamos
-		//um espaco depois
-		if(i < total_cols -1) {
-			printf("%d ",img_matrix[row][i]);
-			/*pra dar flush num arquivo externo
-			 * descomente a linha abaixo
-			 */
-			//fprintf(fp_out, "%d ",img_matrix[row][i]);
-		} else {
-			//nao tem espaco depois do ultimo caracter
-			printf("%d",img_matrix[row][i]);
-			/*pra dar flush num arquivo externo
-			 * descomente a linha abaixo
-			 */
-			//fprintf(fp_out, "%d",img_matrix[row][i]);
+		return;
 
-		}
+	}
+
+	if(count == 3)
+	{
+		if(i + 2 < total_cols -1)
+			printf("%d %d %d ",img_matrix[row][i], img_matrix[row][i+1], img_matrix[row][i+2]);
+
+		else
+			printf("%d %d %d",img_matrix[row][i], img_matrix[row][i+1], img_matrix[row][i+2]);
+
+	}
+
+	if(count == 2)
+	{
+		if(i + 1 < total_cols -1)
+			printf("%d %d ",img_matrix[row][i], img_matrix[row][i+1]);
+		else
+			printf("%d %d",img_matrix[row][i], img_matrix[row][i+1]);
+
+	}
+
+
+	if(count == 1)
+	{
+		if(i < total_cols -1)
+			printf("%d ",img_matrix[row][i]);
+		else
+			printf("%d",img_matrix[row][i]);
+
+
 	}
 
 }
